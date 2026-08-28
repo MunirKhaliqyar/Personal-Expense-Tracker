@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using Personal_Expense_Tracker.Models;
 
 namespace Personal_Expense_Tracker.Services
@@ -37,11 +38,11 @@ namespace Personal_Expense_Tracker.Services
             return _expenseList.Remove(expense);
         }
         // Edits an expense - only updates the fields that are provided (non-null)
-        public bool EditExpense(string id, 
-            string newDescription = null,
-            decimal? newAmount = null,
-            DateTime? newDate = null,
-            Category? newCategory = null)
+        public void EditExpense(string id, 
+            string newDescription,
+            decimal newAmount,
+            DateTime newDate,
+            Category newCategory)
         {
             // Validate ID
             if (string.IsNullOrWhiteSpace(id)) 
@@ -51,10 +52,6 @@ namespace Personal_Expense_Tracker.Services
 
             // Find the expense
             var expense = _expenseList.FirstOrDefault(e => e.Id == id);
-            if (expense == null)
-            {
-                return false;       // ID not found
-            }
 
             // Update only the fields that are provided
             if (newDescription != null)
@@ -64,32 +61,20 @@ namespace Personal_Expense_Tracker.Services
                     throw new ArgumentNullException(nameof(newDescription), "Description cannot be empty");
                 }
 
-                return expense.Description == newDescription;
+                expense.Description = newDescription;
             }
-            if (newAmount.HasValue) 
+
+            if (newAmount <= 0)
             {
-                if (newAmount <= 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(newAmount), "Amount must be positive");
-                }
-                return expense.Amount == newAmount;
+                throw new ArgumentOutOfRangeException(nameof(newAmount), "Amount must be positive");
             }
-            if (newDate.HasValue) 
-            {
-                if (newDate.Value > DateTime.Now)
-                {
-                    throw new ArgumentException(nameof(newDate), "Date cannot be in the future");
-                }
-                Console.WriteLine($"newDate: {newDate}");
-                Console.WriteLine($"newDate.Value: {newDate.Value}");
-                return expense.Date == newDate;
-            }
-            if (newCategory.HasValue) 
-            {
-                return expense.Category == newCategory;
-            }
-            return true;
+            expense.Amount = newAmount;
+            
+            expense.Date = newDate;
+
+            expense.Category = newCategory;
         }
+
         // Returns a copy of all expenses
         public List<Expense> GetAllExpenses()
         {
@@ -156,6 +141,18 @@ namespace Personal_Expense_Tracker.Services
             return _expenseList
                 .Where(expense => expense.Description.IndexOf(description, StringComparison.OrdinalIgnoreCase) >= 0)
                 .ToList();
+        }
+
+        // Get expense by ID
+        public Expense GetExpenseById(string id)
+        {
+            return _expenseList.FirstOrDefault(expense => expense.Id == id);
+        }
+
+        // Checks if an expense exists by ID
+        public bool ExpenseExists(string id)
+        {
+            return _expenseList.Any(expense => expense.Id == id);
         }
     }
 }
