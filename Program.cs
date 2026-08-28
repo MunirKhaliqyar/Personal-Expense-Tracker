@@ -237,7 +237,7 @@ namespace Personal_Expense_Tracker
                     {
                         Console.WriteLine("No expenses to edit!");
                         Console.WriteLine("\nPress any key to return to main menu.");
-                        Console.ReadLine();
+                        Console.ReadKey();
                         DisplayMenu();
                     }
 
@@ -256,13 +256,13 @@ namespace Personal_Expense_Tracker
                     if (!Guid.TryParse(idInput, out Guid expenseId) || string.IsNullOrWhiteSpace(idInput))
                     {
                         Console.WriteLine("Invalid ID format!");
-                        Console.ReadLine();
+                        Console.ReadKey();
                         continue;
                     }
                     else if (!_expenseService.ExpenseExists(expenseId.ToString()))
                     {
                         Console.WriteLine("Expense with the given ID does not exist!");
-                        Console.Read();
+                        Console.ReadKey();
                         continue;
                     }
 
@@ -412,7 +412,7 @@ namespace Personal_Expense_Tracker
                     {
                         Console.WriteLine("No expenses to edit!");
                         Console.WriteLine("\nPress any key to return to main menu.");
-                        Console.ReadLine();
+                        Console.ReadKey();
                         DisplayMenu();
                     }
 
@@ -432,13 +432,13 @@ namespace Personal_Expense_Tracker
                     if (!Guid.TryParse(idInput, out Guid expenseId) || string.IsNullOrWhiteSpace(idInput))
                     {
                         Console.WriteLine("Invalid ID format!");
-                        Console.Read();
+                        Console.ReadKey();
                         continue;
                     }
                     else if (!_expenseService.ExpenseExists(expenseId.ToString()))
                     {
                         Console.WriteLine("Expense with the given ID does not exist!");
-                        Console.Read();
+                        Console.ReadKey();
                         continue;
                     }
 
