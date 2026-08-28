@@ -233,6 +233,14 @@ namespace Personal_Expense_Tracker
 
                 try
                 {
+                    if (_expenseService.GetExpenseCount() == 0)
+                    {
+                        Console.WriteLine("No expenses to edit!");
+                        Console.WriteLine("\nPress any key to return to main menu.");
+                        Console.ReadLine();
+                        DisplayMenu();
+                    }
+
                     foreach (var expense in _expenseService.GetAllExpenses())
                     {
                         Console.WriteLine($"ID: {expense.Id} | Description: {expense.Description} | Amount: {expense.Amount:C} | Date: {expense.Date.ToShortDateString()} | Category: {expense.Category}");
@@ -248,10 +256,13 @@ namespace Personal_Expense_Tracker
                     if (!Guid.TryParse(idInput, out Guid expenseId) || string.IsNullOrWhiteSpace(idInput))
                     {
                         Console.WriteLine("Invalid ID format!");
+                        Console.ReadLine();
                         continue;
-                    } else if (!_expenseService.ExpenseExists(expenseId.ToString()))
+                    }
+                    else if (!_expenseService.ExpenseExists(expenseId.ToString()))
                     {
                         Console.WriteLine("Expense with the given ID does not exist!");
+                        Console.Read();
                         continue;
                     }
 
@@ -369,7 +380,7 @@ namespace Personal_Expense_Tracker
                     // Edit the expense
                     Console.WriteLine();
                     _expenseService.EditExpense(expenseId.ToString(), newDescription, newAmount, newDate, newCategory);
-                    Console.WriteLine($"\nExpense is edited successfully!");
+                    Console.WriteLine($"\nExpense with ID: {expenseToEdit.Id} is edited successfully!");
 
                     Console.WriteLine("\nPress 'R' to return to Main Menu, 'Esc' to Exit, or any key to continue");
                     string key = Console.ReadLine().ToString();
@@ -389,8 +400,69 @@ namespace Personal_Expense_Tracker
         // Display the "Delete an expense" option
         static void DeleteExpense()
         {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("-----DELETE AN EXPENSE-----");
+                Console.WriteLine("\n(Press 'R' to return to menu, 'Esc' to exit at any time)\n");
 
+                try
+                {
+                    if (_expenseService.GetExpenseCount() == 0)
+                    {
+                        Console.WriteLine("No expenses to edit!");
+                        Console.WriteLine("\nPress any key to return to main menu.");
+                        Console.ReadLine();
+                        DisplayMenu();
+                    }
+
+                    foreach (var expense in _expenseService.GetAllExpenses())
+                    {
+                        Console.WriteLine($"ID: {expense.Id} | Description: {expense.Description} | Amount: {expense.Amount:C} | Date: {expense.Date.ToShortDateString()} | Category: {expense.Category}");
+                    }
+
+                    Console.WriteLine();
+                    Console.Write("\nEnter the ID of the expense you want to delete: ");
+                    string idInput = Console.ReadLine();
+                    if (CheckForExitOrReturn(idInput))
+                    {
+                        return;
+                    }
+
+                    if (!Guid.TryParse(idInput, out Guid expenseId) || string.IsNullOrWhiteSpace(idInput))
+                    {
+                        Console.WriteLine("Invalid ID format!");
+                        Console.Read();
+                        continue;
+                    }
+                    else if (!_expenseService.ExpenseExists(expenseId.ToString()))
+                    {
+                        Console.WriteLine("Expense with the given ID does not exist!");
+                        Console.Read();
+                        continue;
+                    }
+
+                    Expense expenseToDelete = _expenseService.GetExpenseById(expenseId.ToString());
+                    _expenseService.DeleteExpense(expenseId.ToString());        // Delete the expense
+                    Console.WriteLine();
+                    Console.WriteLine($"\nExpense with ID: {expenseToDelete.Id} is deleted successfully!");
+
+                    Console.WriteLine("\nPress 'R' to return to Main Menu, 'Esc' to Exit, or any key to continue");
+                    string key = Console.ReadLine().ToString();
+                    if (CheckForExitOrReturn(key))
+                    {
+                        return;
+                    }
+                    continue;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    return;
+                }
+            }
         }
+
         // Display the "All expenses" option
         static void ViewAllExpenses()
         {
