@@ -38,14 +38,10 @@ namespace Personal_Expense_Tracker.Models
 
         // Properties
         public string Id { get { return _id; } }
-        public string Description { get { return _description; } }
-        public decimal Amount { get { return _amount; } }
-        public DateTime Date { get { return _date; } }
-        public Category Category 
-        {
-            get { return _category; }
-            set { _category = value; }
-        }
+        public string Description { get { return _description; } set { _description = value; } }
+        public decimal Amount { get { return _amount; } set { _amount = value; } }
+        public DateTime Date { get { return _date; } set { _date = value; } }
+        public Category Category { get { return _category; } set { _category = value; } }
 
         // Methods
         
