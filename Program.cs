@@ -553,27 +553,273 @@ namespace Personal_Expense_Tracker
         // Display the "Expenses by date range" option
         static void SearchByDateRange()
         {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("-----EXPENSES BY DATE RANGE-----");
+                Console.WriteLine("\n(Press 'R' to return to Main Menu, 'Esc' to Exit at any time)\n");
 
+                try
+                {
+                    DateTime startDate;
+                    DateTime endDate;
+                    // Get start date
+                    while (true)
+                    {
+                        Console.Write("Date(yyyy-mm-dd,please Enter the start date): ");
+                        string startDateInput = Console.ReadLine();
+                        if (CheckForExitOrReturn(startDateInput))
+                        {
+                            return;
+                        }
+
+                        if (string.IsNullOrEmpty(startDateInput) || !DateTime.TryParse(startDateInput, out startDate))
+                        {
+                            Console.WriteLine("Invalid date format!");
+                            continue;
+                        }
+                        break;
+                    }
+                    // Get end date
+                    while (true)
+                    {
+                        Console.Write("Date(yyyy-mm-dd,please Enter the end date): ");
+                        string endDateInput = Console.ReadLine();
+                        if (CheckForExitOrReturn(endDateInput))
+                        {
+                            return;
+                        }
+
+                        if (string.IsNullOrEmpty(endDateInput) || !DateTime.TryParse(endDateInput, out endDate))
+                        {
+                            Console.WriteLine("Invalid date format!");
+                            continue;
+                        }
+                        break;
+                    }
+
+                    if (_expenseService.GetExpensesByDateRange(startDate, endDate).Count == 0)
+                    {
+                        Console.WriteLine("\nNo expenses found in the given date range.");
+                    }
+                    else
+                    {
+                        foreach (var expense in _expenseService.GetExpensesByDateRange(startDate, endDate))
+                        {
+                            Console.WriteLine($"ID: {expense.Id} | Description: {expense.Description} | Amount: {expense.Amount:C} | Date: {expense.Date.ToShortDateString()} | Category: {expense.Category}");
+                        }
+                    }
+
+                    Console.WriteLine("\nPress 'R' to return to Main Menu, 'Esc' to Exit, or any key to continue");
+                    string key = Console.ReadLine().ToString();
+                    if (CheckForExitOrReturn(key))
+                    {
+                        return;
+                    }
+                    continue;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    return;
+                }
+            }
         }
         // Display the "Search expenses by category" option
         static void SearchByCategory()
         {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("-----SEARCH EXPENSES BY CATEGORY-----");
+                Console.WriteLine("\n(Press 'R' to return to Main Menu, 'Esc' to Exit at any time)");
+                Console.WriteLine("Category types: Food, Transportation, Utilities, Entertainment, Shopping, Healthcare, Rent, Other\n");
 
+                try
+                {
+                    Category category;
+                    // Get category
+                    while (true)
+                    {
+                        Console.Write("Please enter the category: ");
+                        string categoryInput = Console.ReadLine();
+                        if (CheckForExitOrReturn(categoryInput))
+                        {
+                            return;
+                        }
+
+                        if (string.IsNullOrWhiteSpace(categoryInput) || !Enum.TryParse<Category>(categoryInput, true, out category))
+                        {
+                            Console.WriteLine("Invalid category!");
+                            continue;
+                        }
+                        break;
+                    }
+
+                    if (_expenseService.GetExpensesByCategory(category).Count == 0)
+                    {
+                        Console.WriteLine("\nNo expenses found in the given category.");
+                    }
+                    else
+                    {
+                        foreach (var expense in _expenseService.GetExpensesByCategory(category))
+                        {
+                            Console.WriteLine($"ID: {expense.Id} | Description: {expense.Description} | Amount: {expense.Amount:C} | Date: {expense.Date.ToShortDateString()} | Category: {expense.Category}");
+                        }
+                    }
+
+                    Console.WriteLine("\nPress 'R' to return to Main Menu, 'Esc' to Exit, or any key to continue");
+                    string key = Console.ReadLine().ToString();
+                    if (CheckForExitOrReturn(key))
+                    {
+                        return;
+                    }
+                    continue;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    return;
+                }
+            }
         }
         // Display the "Show monthly totals" option
         static void ShowMonthlyTotals()
         {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("-----SHOW MONTHLY TOTALS-----");
+                Console.WriteLine("\n(Press 'R' to return to Main Menu, 'Esc' to Exit at any time)\n");
 
+                try
+                {
+                    int year;
+                    int month;
+
+                    // Get year
+                    while (true)
+                    {
+                        Console.Write("Please enter the year: ");
+                        string yearInput = Console.ReadLine();
+                        if (CheckForExitOrReturn(yearInput))
+                        {
+                            return;
+                        }
+
+                        if (string.IsNullOrWhiteSpace(yearInput) || !int.TryParse(yearInput, out year) || year < 1 || year > DateTime.Now.Year)
+                        {
+                            Console.WriteLine("Invalid year!");
+                            continue;
+                        }
+                        break;
+                    }
+
+                    // Get month
+                    while (true)
+                    {
+                        Console.Write("Please enter the month: ");
+                        string monthInput = Console.ReadLine();
+                        if (CheckForExitOrReturn(monthInput))
+                        {
+                            return;
+                        }
+
+                        if (string.IsNullOrWhiteSpace(monthInput) || !int.TryParse(monthInput, out month))
+                        {
+                            Console.WriteLine("Invalid month!");
+                            continue;
+                        }
+                        month = Convert.ToInt32(monthInput);
+                        break;
+                    }
+
+                    decimal totalExpense = _expenseService.CalculateTotalOfMonth(year, month);
+                    Console.WriteLine($"\nTotal expenses for {month}/{year}: {totalExpense:C}");
+
+                    Console.WriteLine("\nPress 'R' to return to Main Menu, 'Esc' to Exit, or any key to continue");
+                    string key = Console.ReadLine().ToString();
+                    if (CheckForExitOrReturn(key))
+                    {
+                        return;
+                    }
+                    continue;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    return;
+                }
+            }
         }
         // Display the "Show yearly totals" option
         static void ShowYearlyTotals()
         {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("-----SHOW YEARLY TOTALS-----");
+                Console.WriteLine("\n(Press 'R' to return to Main Menu, 'Esc' to Exit at any time)\n");
 
+                try
+                {
+                    int year;
+
+                    // Get year
+                    while (true)
+                    {
+                        Console.Write("Please enter the year: ");
+                        string yearInput = Console.ReadLine();
+                        if (CheckForExitOrReturn(yearInput))
+                        {
+                            return;
+                        }
+
+                        if (string.IsNullOrWhiteSpace(yearInput) || !int.TryParse(yearInput, out year) || year < 1 || year > DateTime.Now.Year)
+                        {
+                            Console.WriteLine("Invalid year!");
+                            continue;
+                        }
+                        break;
+                    }
+
+                    decimal totalExpense = _expenseService.CalculateTotalOfYear(year);
+                    Console.WriteLine($"\nTotal expenses for {year}: {totalExpense:C}");
+
+                    Console.WriteLine("\nPress 'R' to return to Main Menu, 'Esc' to Exit, or any key to continue");
+                    string key = Console.ReadLine().ToString();
+                    if (CheckForExitOrReturn(key))
+                    {
+                        return;
+                    }
+                    continue;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    return;
+                }
+            }
         }
         // Display the "Show total of all expenses" option
         static void ShowTotalAllExpense()
         {
+            Console.Clear();
+            Console.WriteLine("-----SHOW TOTAL OF ALL EXPENSES-----");
+            Console.WriteLine("\nPress any key to return to main menu.\n");
 
+            try
+            {
+                Console.WriteLine($"Total expenses cost: {_expenseService.CalculateTotalExpense():C}");
+
+                Console.ReadKey();
+                DisplayMenu();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return;
+            }
         }
 
         // Display the "Exit" option
