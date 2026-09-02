@@ -113,7 +113,7 @@ namespace Personal_Expense_Tracker
             {
                 Console.Clear();
                 Console.WriteLine("-----ADD NEW EXPENSE-----");
-                Console.WriteLine("\n(Press 'R' to return to menu, 'Esc' to exit at any time)\n");
+                Console.WriteLine("\n(Press 'R' to return to Main Menu, 'Esc' to Exit at any time)\n");
 
                 try
                 {
@@ -229,7 +229,7 @@ namespace Personal_Expense_Tracker
             {
                 Console.Clear();
                 Console.WriteLine("-----EDIT AN EXPENSE-----");
-                Console.WriteLine("\n(Press 'R' to return to menu, 'Esc' to exit at any time)\n");
+                Console.WriteLine("\n(Press 'R' to return to Main Menu, 'Esc' to Exit at any time)\n");
 
                 try
                 {
@@ -239,6 +239,7 @@ namespace Personal_Expense_Tracker
                         Console.WriteLine("\nPress any key to return to main menu.");
                         Console.ReadKey();
                         DisplayMenu();
+                        return;
                     }
 
                     foreach (var expense in _expenseService.GetAllExpenses())
@@ -278,23 +279,18 @@ namespace Personal_Expense_Tracker
                     Console.WriteLine("Enter new values for the expense (leave blank to keep current value):");
 
                     // Edit Descriptin
-                    while (true)
+                    Console.WriteLine();
+                    Console.WriteLine($"Current description: {expenseToEdit.Description}");
+                    Console.Write("New description: ");
+                    newDescription = Console.ReadLine();
+                    if (CheckForExitOrReturn(newDescription))
                     {
-                        Console.WriteLine();
-                        Console.WriteLine($"Current description: {expenseToEdit.Description}");
-                        Console.Write("New description: ");
-                        newDescription = Console.ReadLine();
-                        if (CheckForExitOrReturn(newDescription))
-                        {
-                            return;
-                        }
+                        return;
+                    }
 
-                        if (string.IsNullOrWhiteSpace(newDescription))
-                        {
-                            newDescription = expenseToEdit.Description; // Keep current value
-                            continue;
-                        }
-                        break;
+                    if (string.IsNullOrWhiteSpace(newDescription))
+                    {
+                        newDescription = expenseToEdit.Description; // Keep current value
                     }
 
                     // Edit Amount
@@ -310,15 +306,13 @@ namespace Personal_Expense_Tracker
                             return;
                         }
 
-                        if (!decimal.TryParse(newAmountInput, out newAmount) || newAmount <= 0)
-                        {
-                            Console.WriteLine("Please enter a valid positive amount");
-                            continue;
-                        }
-
                         if (string.IsNullOrWhiteSpace(newAmountInput))
                         {
                             newAmount = expenseToEdit.Amount; // Keep current value
+                            break;
+                        }else if (!decimal.TryParse(newAmountInput, out newAmount) || newAmount <= 0)
+                        {
+                            Console.WriteLine("Please enter a valid positive amount");
                             continue;
                         }
                         break;
@@ -339,8 +333,7 @@ namespace Personal_Expense_Tracker
                         {
                             newDate = expenseToEdit.Date;   // Keep current value
                             break;
-                        }
-                        else if (!DateTime.TryParse(dateInput, out newDate))
+                        }else if (!DateTime.TryParse(dateInput, out newDate))
                         {
                             Console.WriteLine("Invalid date format!");
                             continue;
@@ -364,12 +357,11 @@ namespace Personal_Expense_Tracker
                             return;
                         }
 
-                        if(string.IsNullOrWhiteSpace(categoryInput))
+                        if (string.IsNullOrWhiteSpace(categoryInput))
                         {
                             newCategory = expenseToEdit.Category; // Keep current value
                             break;
-                        }
-                        else if (!Enum.TryParse<Category>(categoryInput, true, out newCategory))
+                        }else if (!Enum.TryParse<Category>(categoryInput, true, out newCategory))
                         {
                             Console.WriteLine("Invalid category! Please put one of the above categories.");
                             continue;
@@ -404,16 +396,17 @@ namespace Personal_Expense_Tracker
             {
                 Console.Clear();
                 Console.WriteLine("-----DELETE AN EXPENSE-----");
-                Console.WriteLine("\n(Press 'R' to return to menu, 'Esc' to exit at any time)\n");
+                Console.WriteLine("\n(Press 'R' to return to Main Menu, 'Esc' to Exit at any time)\n");
 
                 try
                 {
                     if (_expenseService.GetExpenseCount() == 0)
                     {
                         Console.WriteLine("No expenses to edit!");
-                        Console.WriteLine("\nPress any key to return to main menu.");
+                        Console.WriteLine("\nPress any key to return to Main Menu.");
                         Console.ReadKey();
                         DisplayMenu();
+                        return;
                     }
 
                     foreach (var expense in _expenseService.GetAllExpenses())
@@ -466,17 +459,96 @@ namespace Personal_Expense_Tracker
         // Display the "All expenses" option
         static void ViewAllExpenses()
         {
+            Console.Clear();
+            Console.WriteLine("-----ALL EXPENSES-----");
+            Console.WriteLine("\nPress any key to return to main menu.\n");
 
+            try
+            {
+                if (_expenseService.GetExpenseCount() == 0)
+                {
+                    Console.WriteLine("No expenses yet.");
+                    Console.WriteLine("\nPress any key to return to main menu.");
+                    Console.ReadKey();
+                    DisplayMenu();
+                    return;
+                }
+
+                foreach (var expense in _expenseService.GetAllExpenses())
+                {
+                    Console.WriteLine($"ID: {expense.Id} | Description: {expense.Description} | Amount: {expense.Amount:C} | Date: {expense.Date.ToShortDateString()} | Category: {expense.Category}");
+                }
+
+                Console.ReadKey();
+                DisplayMenu();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return;
+            }
         }
+
         // Display the "Total number of expenses" option
         static void ViewTotalNumberOfExpenses()
         {
+            Console.Clear();
+            Console.WriteLine("-----TOTAL NUMBER OF EXPENSES-----");
+            Console.WriteLine("\nPress any key to return to main menu.\n");
 
+            try
+            {
+                Console.WriteLine($"Total number of expenses: {_expenseService.GetExpenseCount()}");
+
+                Console.ReadKey();
+                DisplayMenu();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return;
+            }
         }
         // Display the "Expenses by description" option
         static void SearchByDescription()
         {
 
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("-----EXPENSES BY DESCRIPTION-----");
+                Console.WriteLine("\n(Press 'R' to return to Main Menu, 'Esc' to Exit at any time)\n");
+
+                try
+                {
+                    Console.WriteLine();
+                    Console.Write("\nEnter the description of the expense: ");
+                    string description = Console.ReadLine();
+                    if (CheckForExitOrReturn(description))
+                    {
+                        return;
+                    }
+
+                    foreach (var expense in _expenseService.GetExpensesByDescription(description))
+                    {
+                        Console.WriteLine($"ID: {expense.Id} | Description: {expense.Description} | Amount: {expense.Amount:C} | Date: {expense.Date.ToShortDateString()} | Category: {expense.Category}");
+                    }
+
+                    Console.WriteLine("\nPress 'R' to return to Main Menu, 'Esc' to Exit, or any key to continue");
+                    string key = Console.ReadLine().ToString();
+                    if (CheckForExitOrReturn(key))
+                    {
+                        return;
+                    }
+                    continue;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    return;
+                }
+            }
         }
         // Display the "Expenses by date range" option
         static void SearchByDateRange()
