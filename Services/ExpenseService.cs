@@ -91,15 +91,19 @@ namespace Personal_Expense_Tracker.Services
         }
 
         // Calculates total expenses of a specific month
-        public decimal CalculateTotalOfMonth(int month)
+        public decimal CalculateTotalOfMonth(int year, int month)
         {
+            if (year < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(year), "Year must be a positive integer.");
+            }
             if (month < 1 || month > 12)
             {
                 throw new ArgumentOutOfRangeException(nameof(month), "Month must be between 1 and 12.");
             }
 
             return _expenseList
-                .Where(expense => expense.Date.Month == month)
+                .Where(expense => expense.Date.Year == year && expense.Date.Month == month)
                 .Sum(expense => expense.Amount);
         }
 
@@ -127,7 +131,7 @@ namespace Personal_Expense_Tracker.Services
         public List<Expense> GetExpensesByDateRange(DateTime starteDate, DateTime endDate)
         {
             return _expenseList
-                .Where(expense => expense.Date >= starteDate && expense.Date <= endDate)
+                .Where(expense => expense.Date.Date >= starteDate && expense.Date.Date <= endDate)
                 .ToList();
         }
 
@@ -140,6 +144,14 @@ namespace Personal_Expense_Tracker.Services
             }
             return _expenseList
                 .Where(expense => expense.Description.IndexOf(description, StringComparison.OrdinalIgnoreCase) >= 0)
+                .ToList();
+        }
+
+        // Get expenses by category
+        public List<Expense> GetExpensesByCategory(Category category)
+        {
+            return _expenseList
+                .Where(expense => expense.Category == category)
                 .ToList();
         }
 
