@@ -13,7 +13,6 @@ A lightweight console application to track personal expenses. The app supports a
 - [Common Issues & Troubleshooting](#common-issues--troubleshooting)
 - [Contributing](#contributing)
 - [Git Ignore (Data folder)](#git-ignore-data-folder)
-- [License](#license)
 
 ## Features
 - Add a new expense (description, amount, date, category).
@@ -90,7 +89,7 @@ All data is stored in the `Data` folder as `Data/expenses.json` in JSON format. 
 
 ## JSON Schema Example
 An example entry stored in `Data/expenses.json`:
-
+```
 [
   {
     "Id": "3f9a7b5b-1f2a-4d5e-9a6b-2a3b4c5d6e7f",
@@ -100,6 +99,7 @@ An example entry stored in `Data/expenses.json`:
     "Category": "Food"
   }
 ]
+```
 
 ## Issues that I encountered & Troubleshooting
 - **IDs change after reload:**
@@ -136,8 +136,8 @@ Data/
 
 If `Data/` is already committed, remove it from the index and commit:
 
-git rm -r --cached "Personal Expense Tracker/Data"
-git add .gitignore
-git commit -m "Ignore Data folder"
+- git rm -r --cached "Personal Expense Tracker/Data"
+- git add .gitignore
+- git commit -m "Ignore Data folder"
 
 ---
