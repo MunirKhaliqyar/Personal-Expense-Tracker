@@ -17,6 +17,9 @@ namespace Personal_Expense_Tracker
         // The main method
         static void Main(string[] args)
         {
+            FileService fileService = new FileService();
+            fileService.LoadExpenses();                     // Load expenses from file at the start of the application
+
             DisplayMenu();
         }
 
@@ -42,6 +45,8 @@ namespace Personal_Expense_Tracker
             Console.WriteLine('|' + "11. Show Total of All Expenses".PadRight(Console.WindowWidth - 2) + '|');
             Console.WriteLine('|' + " 0. Exit".PadRight(Console.WindowWidth - 2) + '|');
             Console.WriteLine(new string('-', Console.WindowWidth));
+
+            FileService fileService = new FileService();
 
             while (true)
             {
@@ -825,6 +830,9 @@ namespace Personal_Expense_Tracker
         // Display the "Exit" option
         static void ExitApplication()
         {
+            FileService fileService = new FileService();
+            fileService.SaveExpenses(_expenseService.GetAllExpenses());
+
             string goodByeMessage = "THANK YOU FOR USING THE";
             string expenseTrackerApp = "EXPENSE TRACKER APP!";
             string goodBye = "Goodbye!";

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Personal_Expense_Tracker.Models;
 
 namespace Personal_Expense_Tracker.Models
@@ -37,7 +38,8 @@ namespace Personal_Expense_Tracker.Models
         }
 
         // Properties
-        public string Id { get { return _id; } }
+        [JsonInclude]
+        public string Id { get { return _id; } private set { _id = value; } }
         public string Description { get { return _description; } set { _description = value; } }
         public decimal Amount { get { return _amount; } set { _amount = value; } }
         public DateTime Date { get { return _date; } set { _date = value; } }

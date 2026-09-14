@@ -9,7 +9,19 @@ namespace Personal_Expense_Tracker.Services
     internal class ExpenseService
     {
         // Fields
+        FileService _fileService = new FileService();
         private readonly List<Expense> _expenseList = new List<Expense>();
+
+        // Constructor
+        public ExpenseService()
+        {
+            // Load expenses from file on initialization
+            var loadedExpenses = _fileService.LoadExpenses();
+            if (loadedExpenses != null)
+            {
+                _expenseList.AddRange(loadedExpenses);
+            }
+        }
 
         // Methods
 
