@@ -73,8 +73,8 @@ When you start the application, you will see a menu with options:
 - `0` Exit
 
 Interactive prompts accept these special inputs at most fields:
-- `R` � return to Main Menu
-- `ESC` or `EXIT` � exit the application
+- `R`  return to Main Menu
+- `ESC` or `EXIT`  exit the application
 
 **Notes about editing:**
 - When editing an expense, leave an input blank to keep its current value.
